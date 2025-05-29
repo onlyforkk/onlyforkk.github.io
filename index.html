@@ -1,13 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6482153295609766"
-     crossorigin="anonymous"></script>
-  <title>cool code</title>
+  <title>Enigma Machine + Chat</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #1e1e2f; color: #fff; padding: 20px; }
-    textarea, input, button, select { margin: 5px 0; padding: 10px; font-size: 14px; width: 100%; max-width: 500px; }
-    #chatLog { height: 150px; resize: none; }
+    @keyframes backgroundCycle {
+      0% { background-color: hsl(0, 60%, 30%); }
+      25% { background-color: hsl(90, 60%, 30%); }
+      50% { background-color: hsl(180, 60%, 30%); }
+      75% { background-color: hsl(270, 60%, 30%); }
+      100% { background-color: hsl(360, 60%, 30%); }
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      color: #fff;
+      padding: 20px;
+      animation: backgroundCycle 60s linear infinite;
+    }
+
+    textarea, input, button, select { 
+      margin: 5px 0; 
+      padding: 10px; 
+      font-size: 14px; 
+      width: 100%; 
+      max-width: 500px; 
+    }
+
+    #chatLog { 
+      height: 150px; 
+      resize: none; 
+    }
+
     .glow-button {
       background: linear-gradient(45deg, #6a0dad, #9b30ff, #8a2be2, #9400d3);
       border: none;
@@ -20,6 +43,7 @@
       animation: glow 2s infinite linear;
       box-shadow: 0 0 10px #9b30ff;
     }
+
     @keyframes glow {
       0% { box-shadow: 0 0 10px #6a0dad; }
       25% { box-shadow: 0 0 20px #9b30ff; }
@@ -28,9 +52,11 @@
       100% { box-shadow: 0 0 10px #6a0dad; }
     }
   </style>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6482153295609766"
+     crossorigin="anonymous"></script>
 </head>
 <body>
-  <h1> code and stuff</h1>
+  <h1>🛠 Enigma Machine + Offline Chat</h1>
 
   <textarea id="inputText" placeholder="Enter your message here..."></textarea><br>
   <input type="text" id="key" placeholder="Enter key (e.g., ABC)">
@@ -43,7 +69,7 @@
   <input type="text" id="chatInput" placeholder="Type a message">
   <button onclick="sendMessage()">Send</button>
 
-  <h2>discord link</h2>
+  <h2>🎉 Join Our Discord</h2>
   <button class="glow-button" onclick="copyDiscordInvite()">Only the Top Skibidi People</button>
   <p>If the button doesn’t work, <a href="https://discord.gg/euuftPVU" target="_blank" style="color: violet; text-decoration: underline;">click here to join Discord</a>.</p>
 
