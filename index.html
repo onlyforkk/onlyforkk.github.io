@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>cool code</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #1e1e2f; color: #fff; padding: 20px; }
+    textarea, input, button, select { margin: 5px 0; padding: 10px; font-size: 14px; width: 100%; max-width: 500px; }
+    #chatLog { height: 150px; resize: none; }
+    .glow-button {
+      background: linear-gradient(45deg, #6a0dad, #9b30ff, #8a2be2, #9400d3);
+      border: none;
+      padding: 15px 30px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      animation: glow 2s infinite linear;
+      box-shadow: 0 0 10px #9b30ff;
+    }
+    @keyframes glow {
+      0% { box-shadow: 0 0 10px #6a0dad; }
+      25% { box-shadow: 0 0 20px #9b30ff; }
+      50% { box-shadow: 0 0 30px #8a2be2; }
+      75% { box-shadow: 0 0 20px #9400d3; }
+      100% { box-shadow: 0 0 10px #6a0dad; }
+    }
+  </style>
+</head>
+<body>
+  <h1> code and stuff</h1>
+
+  <textarea id="inputText" placeholder="Enter your message here..."></textarea><br>
+  <input type="text" id="key" placeholder="Enter key (e.g., ABC)">
+  <button onclick="encryptMessage()">Encrypt</button>
+  <button onclick="decryptMessage()">Decrypt</button><br>
+  <textarea id="outputText" placeholder="Encrypted/Decrypted text..." readonly></textarea>
+
+  <h2>💬 Local Chat (persists in browser only)</h2>
+  <textarea id="chatLog" readonly></textarea><br>
+  <input type="text" id="chatInput" placeholder="Type a message">
+  <button onclick="sendMessage()">Send</button>
+
+  <h2>discord link</h2>
+  <button class="glow-button" onclick="copyDiscordInvite()">Only the Top Skibidi People</button>
+  <p>If the button doesn’t work, <a href="https://discord.gg/euuftPVU" target="_blank" style="color: violet; text-decoration: underline;">click here to join Discord</a>.</p>
+
+  <script>
+    // Simple Enigma-like substitution with rotors and plugboard
+    function createRotor(seed) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      let arr = chars.split('');
+      for (let i = 0; i < seed.length; i++) {
+        const j = (seed.charCodeAt(i) + i) % 26;
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function enigma(text, key, decrypt = false) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      text = text.toUpperCase().replace(/[^A-Z]/g, '');
+      key = key.toUpperCase().padEnd(5, 'A');
+
+      let plugboard = { A: 'M', B: 'N', C: 'O', D: 'P', E: 'Q', F: 'R', G: 'S', H: 'T', I: 'U', J: 'V', K: 'W', L: 'X', M: 'A', N: 'B', O: 'C', P: 'D', Q: 'E', R: 'F', S: 'G', T: 'H', U: 'I', V: 'J', W: 'K', X: 'L', Y: 'Z', Z: 'Y' };
+
+      let rotors = key.split('').map(k => createRotor(k));
+      let result = '';
+
+      for (let i = 0; i < text.length; i++) {
+        let ch = plugboard[text[i]] || text[i];
+        for (let r = 0; r < rotors.length; r++) {
+          let index = chars.indexOf(ch);
+          ch = rotors[r][index];
+        }
+        if (decrypt) {
+          for (let r = rotors.length - 1; r >= 0; r--) {
+            let index = rotors[r].indexOf(ch);
+            ch = chars[index];
+          }
+          ch = Object.keys(plugboard).find(k => plugboard[k] === ch) || ch;
+        }
+        result += ch;
+      }
+      return result;
+    }
+
+    function encryptMessage() {
+      const text = document.getElementById("inputText").value;
+      const key = document.getElementById("key").value;
+      document.getElementById("outputText").value = enigma(text, key);
+    }
+
+    function decryptMessage() {
+      const text = document.getElementById("inputText").value;
+      const key = document.getElementById("key").value;
+      document.getElementById("outputText").value = enigma(text, key, true);
+    }
+
+    // Chat log using localStorage
+    const chatLog = document.getElementById("chatLog");
+    const chatInput = document.getElementById("chatInput");
+
+    function loadChat() {
+      chatLog.value = localStorage.getItem("chat") || "";
+    }
+
+    function sendMessage() {
+      const msg = chatInput.value.trim();
+      if (!msg) return;
+      const time = new Date().toLocaleTimeString();
+      const line = `[${time}] ${msg}\n`;
+      chatLog.value += line;
+      localStorage.setItem("chat", chatLog.value);
+      chatInput.value = '';
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function copyDiscordInvite() {
+      const invite = "https://discord.gg/euuftPVU";
+      navigator.clipboard.writeText(invite).then(() => {
+        alert("✅ Discord invite copied to clipboard!");
+      });
+    }
+
+    loadChat();
+  </script>
+</body>
+</html>
