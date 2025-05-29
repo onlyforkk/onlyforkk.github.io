@@ -2,35 +2,24 @@
 <html>
 <head>
   <title>Enigma Machine + Chat</title>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6482153295609766"
+     crossorigin="anonymous"></script>
   <style>
-    @keyframes backgroundCycle {
-      0% { background-color: hsl(0, 60%, 30%); }
-      25% { background-color: hsl(90, 60%, 30%); }
-      50% { background-color: hsl(180, 60%, 30%); }
-      75% { background-color: hsl(270, 60%, 30%); }
-      100% { background-color: hsl(360, 60%, 30%); }
-    }
-
     body {
       font-family: Arial, sans-serif;
+      background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1, #fbc2eb, #f6d365);
+      background-size: 400% 400%;
+      animation: gradientBG 30s ease infinite;
       color: #fff;
       padding: 20px;
-      animation: backgroundCycle 60s linear infinite;
     }
-
-    textarea, input, button, select { 
-      margin: 5px 0; 
-      padding: 10px; 
-      font-size: 14px; 
-      width: 100%; 
-      max-width: 500px; 
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
-
-    #chatLog { 
-      height: 150px; 
-      resize: none; 
-    }
-
+    textarea, input, button, select { margin: 5px 0; padding: 10px; font-size: 14px; width: 100%; max-width: 500px; }
+    #chatLog { height: 150px; resize: none; }
     .glow-button {
       background: linear-gradient(45deg, #6a0dad, #9b30ff, #8a2be2, #9400d3);
       border: none;
@@ -43,7 +32,6 @@
       animation: glow 2s infinite linear;
       box-shadow: 0 0 10px #9b30ff;
     }
-
     @keyframes glow {
       0% { box-shadow: 0 0 10px #6a0dad; }
       25% { box-shadow: 0 0 20px #9b30ff; }
@@ -52,29 +40,32 @@
       100% { box-shadow: 0 0 10px #6a0dad; }
     }
   </style>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6482153295609766"
-     crossorigin="anonymous"></script>
 </head>
 <body>
-  <h1>🛠 Enigma Machine + Offline Chat</h1>
+  <h1>🛠 Enigma Machine + Discord Portal</h1>
 
   <textarea id="inputText" placeholder="Enter your message here..."></textarea><br>
   <input type="text" id="key" placeholder="Enter key (e.g., ABC)">
+  <label for="rotorCount">Rotor Count:</label>
+  <select id="rotorCount">
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+  </select>
+  <label for="plugboardInput">Plugboard (e.g. AB CD EF):</label>
+  <input type="text" id="plugboardInput" placeholder="Enter plugboard pairs">
   <button onclick="encryptMessage()">Encrypt</button>
   <button onclick="decryptMessage()">Decrypt</button><br>
   <textarea id="outputText" placeholder="Encrypted/Decrypted text..." readonly></textarea>
-
-  <h2>💬 Local Chat (persists in browser only)</h2>
-  <textarea id="chatLog" readonly></textarea><br>
-  <input type="text" id="chatInput" placeholder="Type a message">
-  <button onclick="sendMessage()">Send</button>
 
   <h2>🎉 Join Our Discord</h2>
   <button class="glow-button" onclick="copyDiscordInvite()">Only the Top Skibidi People</button>
   <p>If the button doesn’t work, <a href="https://discord.gg/euuftPVU" target="_blank" style="color: violet; text-decoration: underline;">click here to join Discord</a>.</p>
 
+  <iframe src="https://e.widgetbot.io/channels/1377629998118080583" height="400" width="100%" style="border:none;"></iframe>
+
   <script>
-    // Simple Enigma-like substitution with rotors and plugboard
     function createRotor(seed) {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       let arr = chars.split('');
@@ -85,14 +76,22 @@
       return arr;
     }
 
-    function enigma(text, key, decrypt = false) {
+    function parsePlugboard(input) {
+      const pairs = input.toUpperCase().match(/([A-Z]{2})/g) || [];
+      let plugboard = {};
+      for (const pair of pairs) {
+        plugboard[pair[0]] = pair[1];
+        plugboard[pair[1]] = pair[0];
+      }
+      return plugboard;
+    }
+
+    function enigma(text, key, rotorCount = 3, plugboard = {}, decrypt = false) {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       text = text.toUpperCase().replace(/[^A-Z]/g, '');
-      key = key.toUpperCase().padEnd(5, 'A');
+      key = key.toUpperCase().padEnd(rotorCount, 'A');
 
-      let plugboard = { A: 'M', B: 'N', C: 'O', D: 'P', E: 'Q', F: 'R', G: 'S', H: 'T', I: 'U', J: 'V', K: 'W', L: 'X', M: 'A', N: 'B', O: 'C', P: 'D', Q: 'E', R: 'F', S: 'G', T: 'H', U: 'I', V: 'J', W: 'K', X: 'L', Y: 'Z', Z: 'Y' };
-
-      let rotors = key.split('').map(k => createRotor(k));
+      let rotors = key.slice(0, rotorCount).split('').map(k => createRotor(k));
       let result = '';
 
       for (let i = 0; i < text.length; i++) {
@@ -116,32 +115,20 @@
     function encryptMessage() {
       const text = document.getElementById("inputText").value;
       const key = document.getElementById("key").value;
-      document.getElementById("outputText").value = enigma(text, key);
+      const rotors = parseInt(document.getElementById("rotorCount").value);
+      const plugboard = parsePlugboard(document.getElementById("plugboardInput").value);
+      if (document.getElementById("plugboardInput").value.toLowerCase().includes("kindi dad")) {
+        alert("There is none");
+      }
+      document.getElementById("outputText").value = enigma(text, key, rotors, plugboard);
     }
 
     function decryptMessage() {
       const text = document.getElementById("inputText").value;
       const key = document.getElementById("key").value;
-      document.getElementById("outputText").value = enigma(text, key, true);
-    }
-
-    // Chat log using localStorage
-    const chatLog = document.getElementById("chatLog");
-    const chatInput = document.getElementById("chatInput");
-
-    function loadChat() {
-      chatLog.value = localStorage.getItem("chat") || "";
-    }
-
-    function sendMessage() {
-      const msg = chatInput.value.trim();
-      if (!msg) return;
-      const time = new Date().toLocaleTimeString();
-      const line = `[${time}] ${msg}\n`;
-      chatLog.value += line;
-      localStorage.setItem("chat", chatLog.value);
-      chatInput.value = '';
-      chatLog.scrollTop = chatLog.scrollHeight;
+      const rotors = parseInt(document.getElementById("rotorCount").value);
+      const plugboard = parsePlugboard(document.getElementById("plugboardInput").value);
+      document.getElementById("outputText").value = enigma(text, key, rotors, plugboard, true);
     }
 
     function copyDiscordInvite() {
@@ -150,8 +137,6 @@
         alert("✅ Discord invite copied to clipboard!");
       });
     }
-
-    loadChat();
   </script>
 </body>
 </html>
