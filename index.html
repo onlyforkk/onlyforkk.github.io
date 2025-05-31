@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ghghgh</title>
+  <meta charset="UTF-8" />
+  <title>Enigma Machine with Discord Button</title>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6482153295609766"
           crossorigin="anonymous"></script>
   <style>
@@ -21,16 +21,49 @@
       max-width: 500px;
       font-size: 16px;
     }
+    .glow-button {
+      background: linear-gradient(45deg, #6a0dad, #9b30ff, #8a2be2, #9400d3);
+      border: none;
+      padding: 15px 30px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      animation: glow 2s infinite linear;
+      box-shadow: 0 0 10px #9b30ff;
+      margin: 20px auto;
+      display: inline-block;
+      user-select: none;
+    }
+    @keyframes glow {
+      0% { box-shadow: 0 0 10px #6a0dad; }
+      25% { box-shadow: 0 0 20px #9b30ff; }
+      50% { box-shadow: 0 0 30px #8a2be2; }
+      75% { box-shadow: 0 0 20px #9400d3; }
+      100% { box-shadow: 0 0 10px #6a0dad; }
+    }
+    a.discord-link {
+      color: violet;
+      text-decoration: underline;
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
 
-<h1>stuff</h1>
-<textarea id="inputText" rows="4" placeholder="Enter your message here"></textarea><br>
-<input type="text" id="key" placeholder="Enter key (e.g., ABCDE)"><br>
+<h1>🔒 Enigma Machine</h1>
+<textarea id="inputText" rows="4" placeholder="Enter your message here"></textarea><br />
+<input type="text" id="key" placeholder="Enter key (e.g., ABCDE)" /><br />
 <button onclick="encryptMessage()">Encrypt</button>
-<button onclick="decryptMessage()">Decrypt</button><br>
+<button onclick="decryptMessage()">Decrypt</button><br />
 <textarea id="outputText" rows="4" readonly placeholder="Encrypted/Decrypted text will appear here"></textarea>
+
+<!-- Discord Invite Button -->
+<button class="glow-button" onclick="copyDiscordInvite()">Only the Top Skibidi People</button>
+<p>If the button doesn’t work, <a href="https://discord.gg/euuftPVU" target="_blank" rel="noopener" class="discord-link">click here to join Discord</a>.</p>
 
 <script>
 // Background color cycle
@@ -54,7 +87,7 @@ function createRotor(seed) {
 function enigma(text, key, decrypt = false) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   text = text.toUpperCase().replace(/[^A-Z]/g, '');
-  key = key.toUpperCase().padEnd(5, 'A'); // Adjust rotor count
+  key = key.toUpperCase().padEnd(5, 'A');
 
   // Basic plugboard mapping
   let plugboard = {
@@ -99,6 +132,15 @@ function decryptMessage() {
   const text = document.getElementById("inputText").value;
   const key = document.getElementById("key").value;
   document.getElementById("outputText").value = enigma(text, key, true);
+}
+
+function copyDiscordInvite() {
+  const invite = "https://discord.gg/euuftPVU";
+  navigator.clipboard.writeText(invite).then(() => {
+    alert("✅ Discord invite copied to clipboard!");
+  }, () => {
+    alert("⚠️ Failed to copy invite link, please use the link below.");
+  });
 }
 </script>
 
