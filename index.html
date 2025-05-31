@@ -1,142 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Enigma Machine + Chat</title>
+  <meta charset="UTF-8">
+  <title>ghghgh</title>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6482153295609766"
-     crossorigin="anonymous"></script>
+          crossorigin="anonymous"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #a18cd1, #fbc2eb, #f6d365);
-      background-size: 400% 400%;
-      animation: gradientBG 30s ease infinite;
-      color: #fff;
-      padding: 20px;
-    }
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    textarea, input, button, select { margin: 5px 0; padding: 10px; font-size: 14px; width: 100%; max-width: 500px; }
-    #chatLog { height: 150px; resize: none; }
-    .glow-button {
-      background: linear-gradient(45deg, #6a0dad, #9b30ff, #8a2be2, #9400d3);
-      border: none;
-      padding: 15px 30px;
       color: white;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 12px;
-      cursor: pointer;
-      animation: glow 2s infinite linear;
-      box-shadow: 0 0 10px #9b30ff;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      transition: background-color 5s linear;
     }
-    @keyframes glow {
-      0% { box-shadow: 0 0 10px #6a0dad; }
-      25% { box-shadow: 0 0 20px #9b30ff; }
-      50% { box-shadow: 0 0 30px #8a2be2; }
-      75% { box-shadow: 0 0 20px #9400d3; }
-      100% { box-shadow: 0 0 10px #6a0dad; }
+    textarea, input, button {
+      margin: 10px;
+      padding: 10px;
+      width: 90%;
+      max-width: 500px;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
-  <h1>🛠 Enigma Machine + Discord Portal</h1>
 
-  <textarea id="inputText" placeholder="Enter your message here..."></textarea><br>
-  <input type="text" id="key" placeholder="Enter key (e.g., ABC)">
-  <label for="rotorCount">Rotor Count:</label>
-  <select id="rotorCount">
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-    <option value="6">6</option>
-  </select>
-  <label for="plugboardInput">Plugboard (e.g. AB CD EF):</label>
-  <input type="text" id="plugboardInput" placeholder="Enter plugboard pairs">
-  <button onclick="encryptMessage()">Encrypt</button>
-  <button onclick="decryptMessage()">Decrypt</button><br>
-  <textarea id="outputText" placeholder="Encrypted/Decrypted text..." readonly></textarea>
+<h1>stuff</h1>
+<textarea id="inputText" rows="4" placeholder="Enter your message here"></textarea><br>
+<input type="text" id="key" placeholder="Enter key (e.g., ABCDE)"><br>
+<button onclick="encryptMessage()">Encrypt</button>
+<button onclick="decryptMessage()">Decrypt</button><br>
+<textarea id="outputText" rows="4" readonly placeholder="Encrypted/Decrypted text will appear here"></textarea>
 
-  <h2>🎉 Join Our Discord</h2>
-  <button class="glow-button" onclick="copyDiscordInvite()">Only the Top Skibidi People</button>
-  <p>If the button doesn’t work, <a href="https://discord.gg/euuftPVU" target="_blank" style="color: violet; text-decoration: underline;">click here to join Discord</a>.</p>
+<script>
+// Background color cycle
+let hue = 0;
+setInterval(() => {
+  document.body.style.backgroundColor = `hsl(${hue}, 70%, 50%)`;
+  hue = (hue + 1) % 360;
+}, 100);
 
-  <iframe src="https://e.widgetbot.io/channels/1377629998118080583" height="400" width="100%" style="border:none;"></iframe>
+// Enigma-like implementation
+function createRotor(seed) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let arr = chars.split('');
+  for (let i = 0; i < seed.length; i++) {
+    const j = (seed.charCodeAt(i) + i) % 26;
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
-  <script>
-    function createRotor(seed) {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      let arr = chars.split('');
-      for (let i = 0; i < seed.length; i++) {
-        const j = (seed.charCodeAt(i) + i) % 26;
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+function enigma(text, key, decrypt = false) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  text = text.toUpperCase().replace(/[^A-Z]/g, '');
+  key = key.toUpperCase().padEnd(5, 'A'); // Adjust rotor count
+
+  // Basic plugboard mapping
+  let plugboard = {
+    A: 'M', B: 'N', C: 'O', D: 'P', E: 'Q', F: 'R', G: 'S',
+    H: 'T', I: 'U', J: 'V', K: 'W', L: 'X', M: 'A', N: 'B',
+    O: 'C', P: 'D', Q: 'E', R: 'F', S: 'G', T: 'H', U: 'I',
+    V: 'J', W: 'K', X: 'L', Y: 'Z', Z: 'Y'
+  };
+
+  if (text.includes("KINDI DAD")) {
+    alert("There is none.");
+  }
+
+  let rotors = key.split('').map(k => createRotor(k));
+  let result = '';
+
+  for (let i = 0; i < text.length; i++) {
+    let ch = plugboard[text[i]] || text[i];
+    for (let r = 0; r < rotors.length; r++) {
+      let index = chars.indexOf(ch);
+      ch = rotors[r][index];
+    }
+    if (decrypt) {
+      for (let r = rotors.length - 1; r >= 0; r--) {
+        let index = rotors[r].indexOf(ch);
+        ch = chars[index];
       }
-      return arr;
+      ch = Object.keys(plugboard).find(k => plugboard[k] === ch) || ch;
     }
+    result += ch;
+  }
+  return result;
+}
 
-    function parsePlugboard(input) {
-      const pairs = input.toUpperCase().match(/([A-Z]{2})/g) || [];
-      let plugboard = {};
-      for (const pair of pairs) {
-        plugboard[pair[0]] = pair[1];
-        plugboard[pair[1]] = pair[0];
-      }
-      return plugboard;
-    }
+function encryptMessage() {
+  const text = document.getElementById("inputText").value;
+  const key = document.getElementById("key").value;
+  document.getElementById("outputText").value = enigma(text, key);
+}
 
-    function enigma(text, key, rotorCount = 3, plugboard = {}, decrypt = false) {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      text = text.toUpperCase().replace(/[^A-Z]/g, '');
-      key = key.toUpperCase().padEnd(rotorCount, 'A');
+function decryptMessage() {
+  const text = document.getElementById("inputText").value;
+  const key = document.getElementById("key").value;
+  document.getElementById("outputText").value = enigma(text, key, true);
+}
+</script>
 
-      let rotors = key.slice(0, rotorCount).split('').map(k => createRotor(k));
-      let result = '';
-
-      for (let i = 0; i < text.length; i++) {
-        let ch = plugboard[text[i]] || text[i];
-        for (let r = 0; r < rotors.length; r++) {
-          let index = chars.indexOf(ch);
-          ch = rotors[r][index];
-        }
-        if (decrypt) {
-          for (let r = rotors.length - 1; r >= 0; r--) {
-            let index = rotors[r].indexOf(ch);
-            ch = chars[index];
-          }
-          ch = Object.keys(plugboard).find(k => plugboard[k] === ch) || ch;
-        }
-        result += ch;
-      }
-      return result;
-    }
-
-    function encryptMessage() {
-      const text = document.getElementById("inputText").value;
-      const key = document.getElementById("key").value;
-      const rotors = parseInt(document.getElementById("rotorCount").value);
-      const plugboard = parsePlugboard(document.getElementById("plugboardInput").value);
-      if (document.getElementById("plugboardInput").value.toLowerCase().includes("kindi dad")) {
-        alert("There is none");
-      }
-      document.getElementById("outputText").value = enigma(text, key, rotors, plugboard);
-    }
-
-    function decryptMessage() {
-      const text = document.getElementById("inputText").value;
-      const key = document.getElementById("key").value;
-      const rotors = parseInt(document.getElementById("rotorCount").value);
-      const plugboard = parsePlugboard(document.getElementById("plugboardInput").value);
-      document.getElementById("outputText").value = enigma(text, key, rotors, plugboard, true);
-    }
-
-    function copyDiscordInvite() {
-      const invite = "https://discord.gg/euuftPVU";
-      navigator.clipboard.writeText(invite).then(() => {
-        alert("✅ Discord invite copied to clipboard!");
-      });
-    }
-  </script>
 </body>
 </html>
